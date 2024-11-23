@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODIN THE ONE EYED</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <h1>ODIN THE ONE EYED</h1>
+        <p>Welcome to the wisdom of the Allfather.</p>
+    </header>
+    <main>
+        <div class="chat-container">
+            <!-- Chat box for displaying messages -->
+            <div id="chat-box" class="chat-box"></div>
+            
+            <!-- Input area for user messages -->
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Ask ODIN anything..." autocomplete="off">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Powered by Fjordr Technologies</p>
+    </footer>
+
+    <script>
+        // Backend URL (Update with your Render backend URL)
+        const BACKEND_URL = "https://your-backend-url.onrender.com/api/chat";
+
+        // Get references to DOM elements
+        const chatBox = document.getElementById('chat-box');
+        const sendButton = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+
+        // Send user message to the backend
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return; // Do nothing if the input is empty
+
+            // Display user's message in the chatbox
+            appendMessage('You', message);
+            userInput.value = ''; // Clear input field
+
+            try {
+                // Send the message to the backend and get the response
+                const response = await axios.post(BACKEND_URL, { message });
+
+                // Append ODIN's reply to the chatbox
+                appendMessage('ODIN', response.data.reply);
+            } catch (error) {
+                console.error('Error contacting the backend:', error);
+                appendMessage('ODIN', 'An error occurred while communicating with the Allfather. Please try again.');
+            }
+        }
+
+        // Append messages to the chatbox
+        function appendMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message');
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        // Add event listeners for sending messages
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
